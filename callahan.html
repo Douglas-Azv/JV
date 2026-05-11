@@ -3,38 +3,31 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Callahan - Conway's Game of Life</title>
-
-  <script src="https://conwaylife.com/js/lifeviewer.js"></script>
+  <title>Callahan Viewer</title>
 
   <style>
-    body {
+    html, body {
       margin: 0;
-      background: white;
-      font-family: Arial, sans-serif;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
 
-    .viewer {
-      width: 100vw;
-      height: 100vh;
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
 
 <body>
 
-<pre class="viewer">
-#LifeViewer 1.3
-#N 10-cell infinite growth
-#O Paul Callahan
-#C A 10-cell infinite growth pattern found in 1997.
-#C No pattern with fewer cells can exhibit infinite growth.
-
-x = 8, y = 6, rule = B3/S23
-6bob$4bob2o$4bobob$4bo3b$2bo5b$obo!
-
-#C [[ AUTOSTART GPS 5 ]]
-</pre>
+<iframe
+src="https://conwaylife.com/wiki/10-cell_infinite_growth_pattern">
+</iframe>
 
 </body>
+
 </html>
