@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Callahan - Conway's Game of Life</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/lifeviewer@latest/dist/lifeviewer.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="viewer">
+#N Callahan
+#C Menor padrão conhecido com crescimento infinito
+#C Conway's Game of Life
+
+x = 8, y = 4, rule = B3/S23
+2bo$obo$2bo3$!
+</div>
+
+</div>
+
+<script>
+  document.querySelector(".viewer").setAttribute("data-autostart", "true");
+</script>
+
+</body>
+</html>
