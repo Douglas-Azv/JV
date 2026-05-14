@@ -2,20 +2,20 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Callahan - Game of Life</title>
+<title>Callahan - Conway Game of Life</title>
 
 <style>
 body{
-    margin:0;
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+  margin:0;
+  background:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
 canvas{
-    border:1px solid #ccc;
+  border:1px solid #ccc;
 }
 </style>
 
@@ -23,23 +23,21 @@ canvas{
 
 <body>
 
-<canvas id="life" width="800" height="600"></canvas>
+<canvas id="life" width="900" height="600"></canvas>
 
 <script>
 
 const canvas=document.getElementById("life");
 const ctx=canvas.getContext("2d");
 
-const cell=15;
-
+const cellSize=12;
 let live=new Set();
 
 function add(x,y){
-    live.add(x+","+y);
+ live.add(`${x},${y}`);
 }
 
-function setupCallahan(){
-
+/* Callahan RLE convertido */
 add(6,0);
 
 add(4,1);
@@ -56,95 +54,89 @@ add(2,4);
 add(0,5);
 add(1,5);
 
+
+function countNeighbors(x,y){
+
+ let dirs=[-1,0,1];
+ let c=0;
+
+ for(let dx of dirs)
+ for(let dy of dirs){
+
+   if(dx===0&&dy===0) continue;
+
+   if(live.has(`${x+dx},${y+dy}`))
+      c++;
+
+ }
+
+ return c;
 }
 
-setupCallahan();
-
-function neighbors(x,y){
-
-let c=0;
-
-for(let dx=-1;dx<=1;dx++){
-for(let dy=-1;dy<=1;dy++){
-
-if(dx===0&&dy===0)continue;
-
-if(live.has((x+dx)+","+(y+dy))) c++;
-
-}}
-
-return c;
-}
 
 function step(){
 
-let counts={};
+ let candidates=new Set();
 
-for(let p of live){
+ for(let p of live){
 
-let [x,y]=p.split(",").map(Number);
+   let [x,y]=p.split(",").map(Number);
 
-for(let dx=-1;dx<=1;dx++){
-for(let dy=-1;dy<=1;dy++){
+   for(let dx=-1;dx<=1;dx++)
+   for(let dy=-1;dy<=1;dy++)
+      candidates.add(`${x+dx},${y+dy}`);
+ }
 
-let k=(x+dx)+","+(y+dy);
+ let next=new Set();
 
-counts[k]=(counts[k]||0)+1;
+ for(let p of candidates){
 
-}}
+   let [x,y]=p.split(",").map(Number);
 
-}
+   let n=countNeighbors(x,y);
 
-let next=new Set();
+   if(live.has(p)){
 
-for(let k in counts){
+      if(n===2||n===3)
+         next.add(p);
 
-let [x,y]=k.split(",").map(Number);
+   }else{
 
-let n=neighbors(x,y);
+      if(n===3)
+         next.add(p);
 
-if(live.has(k)){
+   }
 
-if(n===2||n===3)
-next.add(k);
+ }
 
-}else{
+ live=next;
 
-if(n===3)
-next.add(k);
-
-}
-
-}
-
-live=next;
-
-draw();
+ draw();
 
 }
 
 function draw(){
 
-ctx.clearRect(0,0,800,600);
+ ctx.clearRect(0,0,900,600);
 
-for(let p of live){
+ for(let p of live){
 
-let [x,y]=p.split(",").map(Number);
+   let [x,y]=p.split(",").map(Number);
 
-ctx.fillRect(
-x*cell+300,
-y*cell+150,
-cell,
-cell
-);
+   ctx.fillRect(
+      x*cellSize+300,
+      y*cellSize+200,
+      cellSize,
+      cellSize
+   );
 
-}
+ }
 
 }
 
 draw();
 
-setInterval(step,300);
+setInterval(step,250);
 
 </script>
 
