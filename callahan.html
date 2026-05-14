@@ -1,27 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Callahan - Conway Game of Life</title>
-
-<style>
-body{
-  margin:0;
-  background:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-}
-
-canvas{
-  border:1px solid #ccc;
-}
-</style>
-
-</head>
-
 <body>
+
+<div style="position:absolute;top:20px;left:20px">
+
+<button id="playBtn">
+▶ Iniciar
+</button>
+
+</div>
 
 <canvas id="life" width="900" height="600"></canvas>
 
@@ -30,14 +15,19 @@ canvas{
 const canvas=document.getElementById("life");
 const ctx=canvas.getContext("2d");
 
+const btn=document.getElementById("playBtn");
+
 const cellSize=12;
+
 let live=new Set();
+let running=false;
+let timer=null;
 
 function add(x,y){
  live.add(`${x},${y}`);
 }
 
-/* Callahan RLE convertido */
+/* Callahan */
 add(6,0);
 
 add(4,1);
@@ -54,25 +44,21 @@ add(2,4);
 add(0,5);
 add(1,5);
 
-
 function countNeighbors(x,y){
 
- let dirs=[-1,0,1];
  let c=0;
 
- for(let dx of dirs)
- for(let dy of dirs){
+ for(let dx=-1;dx<=1;dx++)
+ for(let dy=-1;dy<=1;dy++){
 
    if(dx===0&&dy===0) continue;
 
    if(live.has(`${x+dx},${y+dy}`))
       c++;
-
  }
 
  return c;
 }
-
 
 function step(){
 
@@ -117,28 +103,47 @@ function step(){
 
 function draw(){
 
- ctx.clearRect(0,0,900,600);
+ctx.clearRect(0,0,900,600);
 
- for(let p of live){
+for(let p of live){
 
-   let [x,y]=p.split(",").map(Number);
+let [x,y]=p.split(",").map(Number);
 
-   ctx.fillRect(
-      x*cellSize+300,
-      y*cellSize+200,
-      cellSize,
-      cellSize
-   );
+ctx.fillRect(
+x*cellSize+300,
+y*cellSize+200,
+cellSize,
+cellSize
+);
 
- }
+}
+
+}
+
+btn.onclick=function(){
+
+if(!running){
+
+timer=setInterval(step,250);
+
+running=true;
+
+btn.innerText="⏸ Pausar";
+
+}else{
+
+clearInterval(timer);
+
+running=false;
+
+btn.innerText="▶ Iniciar";
+
+}
 
 }
 
 draw();
 
-setInterval(step,250);
-
 </script>
 
 </body>
-</html>
