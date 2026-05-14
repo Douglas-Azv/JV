@@ -1,18 +1,152 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Callahan</title>
+<meta charset="UTF-8">
+<title>Callahan - Game of Life</title>
+
+<style>
+body{
+    margin:0;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+canvas{
+    border:1px solid #ccc;
+}
+</style>
+
 </head>
 
-<body style="margin:0">
+<body>
 
-<iframe
-  src="https://conwaylife.com/wiki/10-cell_infinite_growth_pattern"
-  width="100%"
-  height="800"
-  style="border:none;">
-</iframe>
+<canvas id="life" width="800" height="600"></canvas>
+
+<script>
+
+const canvas=document.getElementById("life");
+const ctx=canvas.getContext("2d");
+
+const cell=15;
+
+let live=new Set();
+
+function add(x,y){
+    live.add(x+","+y);
+}
+
+function setupCallahan(){
+
+add(6,0);
+
+add(4,1);
+add(6,1);
+add(7,1);
+
+add(4,2);
+add(6,2);
+
+add(4,3);
+
+add(2,4);
+
+add(0,5);
+add(1,5);
+
+}
+
+setupCallahan();
+
+function neighbors(x,y){
+
+let c=0;
+
+for(let dx=-1;dx<=1;dx++){
+for(let dy=-1;dy<=1;dy++){
+
+if(dx===0&&dy===0)continue;
+
+if(live.has((x+dx)+","+(y+dy))) c++;
+
+}}
+
+return c;
+}
+
+function step(){
+
+let counts={};
+
+for(let p of live){
+
+let [x,y]=p.split(",").map(Number);
+
+for(let dx=-1;dx<=1;dx++){
+for(let dy=-1;dy<=1;dy++){
+
+let k=(x+dx)+","+(y+dy);
+
+counts[k]=(counts[k]||0)+1;
+
+}}
+
+}
+
+let next=new Set();
+
+for(let k in counts){
+
+let [x,y]=k.split(",").map(Number);
+
+let n=neighbors(x,y);
+
+if(live.has(k)){
+
+if(n===2||n===3)
+next.add(k);
+
+}else{
+
+if(n===3)
+next.add(k);
+
+}
+
+}
+
+live=next;
+
+draw();
+
+}
+
+function draw(){
+
+ctx.clearRect(0,0,800,600);
+
+for(let p of live){
+
+let [x,y]=p.split(",").map(Number);
+
+ctx.fillRect(
+x*cell+300,
+y*cell+150,
+cell,
+cell
+);
+
+}
+
+}
+
+draw();
+
+setInterval(step,300);
+
+</script>
 
 </body>
 </html>
