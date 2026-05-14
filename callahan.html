@@ -8,15 +8,15 @@
 
 body{
     margin:0;
-    background:white;
     overflow:hidden;
+    background:white;
 }
 
 #controls{
     position:absolute;
     top:20px;
     left:20px;
-    z-index:100;
+    z-index:1000;
 }
 
 button{
@@ -28,8 +28,8 @@ button{
 }
 
 #speedLabel{
-    font-size:16px;
     margin-left:10px;
+    font-size:16px;
 }
 
 canvas{
@@ -44,15 +44,25 @@ canvas{
 
 <div id="controls">
 
-<button id="playBtn">▶ Iniciar</button>
+<button id="playBtn">
+▶ Iniciar
+</button>
 
-<button id="zoomIn">+</button>
+<button id="zoomIn">
++
+</button>
 
-<button id="zoomOut">−</button>
+<button id="zoomOut">
+−
+</button>
 
-<button id="slowBtn">🐢</button>
+<button id="slowBtn">
+🐢
+</button>
 
-<button id="fastBtn">⚡</button>
+<button id="fastBtn">
+⚡
+</button>
 
 <span id="speedLabel">
 250 ms
@@ -60,41 +70,64 @@ canvas{
 
 </div>
 
-<canvas id="life" width="1200" height="800"></canvas>
+<canvas id="life"></canvas>
 
 <script>
 
 const canvas=document.getElementById("life");
 const ctx=canvas.getContext("2d");
 
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
 const playBtn=document.getElementById("playBtn");
 const zoomIn=document.getElementById("zoomIn");
 const zoomOut=document.getElementById("zoomOut");
+
 const slowBtn=document.getElementById("slowBtn");
 const fastBtn=document.getElementById("fastBtn");
-const speedLabel=document.getElementById("speedLabel");
+
+const speedLabel=
+document.getElementById(
+"speedLabel"
+);
 
 let running=false;
-let timer=null;
 
-let cellSize=14;
+let timer=null;
 
 let speed=250;
 
+let cellSize=18;
+
+let offsetX=
+window.innerWidth/2;
+
+let offsetY=
+window.innerHeight/2;
+
+let dragging=false;
+
+let lastX=0;
+let lastY=0;
+
 let live=new Set();
 
+
 function add(x,y){
- live.add(`${x},${y}`);
+
+live.add(`${x},${y}`);
+
 }
 
-/* Callahan */
 
-/* -------- Callahan correto -------- */
+/* CALLAHAN CORRETO */
 
 add(6,0);
 
 add(4,1);
 add(6,1);
+add(7,1);
 
 add(4,2);
 add(6,2);
@@ -106,7 +139,9 @@ add(2,4);
 add(0,5);
 add(2,5);
 
-/* -------------------------- */
+
+/* ----------- */
+
 
 function countNeighbors(x,y){
 
@@ -118,8 +153,11 @@ for(let dy=-1;dy<=1;dy++){
 if(dx===0&&dy===0)
 continue;
 
-if(live.has(`${x+dx},${y+dy}`))
-c++;
+if(
+live.has(
+`${x+dx},${y+dy}`
+)
+)c++;
 
 }
 
@@ -130,26 +168,42 @@ return c;
 
 function step(){
 
-let candidates=new Set();
+let candidates=
+new Set();
+
 
 for(let p of live){
 
-let [x,y]=p.split(",").map(Number);
+let [x,y]=
+p.split(",")
+.map(Number);
 
 for(let dx=-1;dx<=1;dx++)
-for(let dy=-1;dy<=1;dy++)
-candidates.add(`${x+dx},${y+dy}`);
+for(let dy=-1;dy<=1;dy++){
+
+candidates.add(
+`${x+dx},${y+dy}`
+);
+
+}
 
 }
 
 
-let next=new Set();
+let next=
+new Set();
 
 for(let p of candidates){
 
-let [x,y]=p.split(",").map(Number);
+let [x,y]=
+p.split(",")
+.map(Number);
 
-let n=countNeighbors(x,y);
+let n=
+countNeighbors(
+x,
+y
+);
 
 if(live.has(p)){
 
@@ -172,6 +226,7 @@ draw();
 }
 
 
+
 function draw(){
 
 ctx.clearRect(
@@ -181,31 +236,102 @@ canvas.width,
 canvas.height
 );
 
+
+/* grade */
+
+ctx.strokeStyle=
+"#eeeeee";
+
+for(
+let x=offsetX%cellSize;
+x<canvas.width;
+x+=cellSize
+){
+
+ctx.beginPath();
+
+ctx.moveTo(
+x,
+0
+);
+
+ctx.lineTo(
+x,
+canvas.height
+);
+
+ctx.stroke();
+
+}
+
+
+for(
+let y=offsetY%cellSize;
+y<canvas.height;
+y+=cellSize
+){
+
+ctx.beginPath();
+
+ctx.moveTo(
+0,
+y
+);
+
+ctx.lineTo(
+canvas.width,
+y
+);
+
+ctx.stroke();
+
+}
+
+
+
+/* células */
+
+ctx.fillStyle=
+"black";
+
+
 for(let p of live){
 
-let [x,y]=p
-.split(",")
+let [x,y]=
+p.split(",")
 .map(Number);
 
+
 ctx.fillRect(
-x*cellSize+450,
-y*cellSize+250,
+
+x*cellSize
++offsetX,
+
+y*cellSize
++offsetY,
+
 cellSize,
+
 cellSize
+
 );
 
 }
 
 }
+
 
 
 function restartTimer(){
 
 if(running){
 
-clearInterval(timer);
+clearInterval(
+timer
+);
 
-timer=setInterval(
+timer=
+setInterval(
 step,
 speed
 );
@@ -215,40 +341,52 @@ speed
 }
 
 
-playBtn.onclick=function(){
+
+playBtn.onclick=
+function(){
 
 if(!running){
 
-timer=setInterval(
+timer=
+setInterval(
 step,
 speed
 );
 
 running=true;
 
-playBtn.innerText="⏸ Pausar";
+playBtn.innerText=
+"⏸ Pausar";
 
 }else{
 
-clearInterval(timer);
+clearInterval(
+timer
+);
 
 running=false;
 
-playBtn.innerText="▶ Iniciar";
+playBtn.innerText=
+"▶ Iniciar";
 
 }
 
 };
 
 
-zoomIn.onclick=function(){
+
+zoomIn.onclick=
+function(){
 
 cellSize+=2;
+
 draw();
 
 };
 
-zoomOut.onclick=function(){
+
+zoomOut.onclick=
+function(){
 
 if(cellSize>4){
 
@@ -261,7 +399,9 @@ draw();
 };
 
 
-fastBtn.onclick=function(){
+
+fastBtn.onclick=
+function(){
 
 if(speed>50){
 
@@ -277,7 +417,8 @@ restartTimer();
 };
 
 
-slowBtn.onclick=function(){
+slowBtn.onclick=
+function(){
 
 speed+=50;
 
@@ -287,6 +428,118 @@ speed+" ms";
 restartTimer();
 
 };
+
+
+
+canvas.addEventListener(
+"mousedown",
+(e)=>{
+
+dragging=true;
+
+lastX=e.clientX;
+lastY=e.clientY;
+
+}
+);
+
+
+canvas.addEventListener(
+"mouseup",
+()=>{
+
+dragging=false;
+
+}
+);
+
+
+
+canvas.addEventListener(
+"mousemove",
+(e)=>{
+
+if(!dragging)
+return;
+
+let dx=
+e.clientX-lastX;
+
+let dy=
+e.clientY-lastY;
+
+offsetX+=dx;
+offsetY+=dy;
+
+lastX=e.clientX;
+lastY=e.clientY;
+
+draw();
+
+}
+);
+
+
+
+canvas.addEventListener(
+"touchstart",
+(e)=>{
+
+dragging=true;
+
+lastX=
+e.touches[0]
+.clientX;
+
+lastY=
+e.touches[0]
+.clientY;
+
+}
+);
+
+
+canvas.addEventListener(
+"touchend",
+()=>{
+
+dragging=false;
+
+}
+);
+
+
+
+canvas.addEventListener(
+"touchmove",
+(e)=>{
+
+if(!dragging)
+return;
+
+let dx=
+e.touches[0]
+.clientX-lastX;
+
+let dy=
+e.touches[0]
+.clientY-lastY;
+
+offsetX+=dx;
+offsetY+=dy;
+
+lastX=
+e.touches[0]
+.clientX;
+
+lastY=
+e.touches[0]
+.clientY;
+
+draw();
+
+}
+);
 
 
 draw();
