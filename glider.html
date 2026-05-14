@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Glider - Conway Game of Life</title>
+<title>Callahan - Conway Game of Life</title>
 
 <style>
 
@@ -28,11 +27,17 @@ font-size:16px;
 cursor:pointer;
 }
 
+#speedLabel{
+margin-left:10px;
+font-size:16px;
+}
+
 canvas{
 display:block;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -51,6 +56,18 @@ display:block;
 −
 </button>
 
+<button id="slowBtn">
+🐢
+</button>
+
+<button id="fastBtn">
+⚡
+</button>
+
+<span id="speedLabel">
+250 ms
+</span>
+
 </div>
 
 <canvas id="life"></canvas>
@@ -67,13 +84,27 @@ const playBtn=document.getElementById("playBtn");
 const zoomIn=document.getElementById("zoomIn");
 const zoomOut=document.getElementById("zoomOut");
 
+const slowBtn=document.getElementById("slowBtn");
+const fastBtn=document.getElementById("fastBtn");
+
+const speedLabel=
+document.getElementById(
+"speedLabel"
+);
+
 let running=false;
+
 let timer=null;
 
-let cellSize=22;
+let speed=250;
 
-let offsetX=window.innerWidth/2;
-let offsetY=window.innerHeight/2;
+let cellSize=18;
+
+let offsetX=
+window.innerWidth/2;
+
+let offsetY=
+window.innerHeight/2;
 
 let dragging=false;
 
@@ -82,23 +113,19 @@ let lastY=0;
 
 let live=new Set();
 
+
 function add(x,y){
+
 live.add(`${x},${y}`);
+
 }
 
 
-/* GLIDER */
+/* CALLAHAN CORRETO */
 
-add(0,0);
-add(1,0);
-add(2,0);
+add(0,0);add(1,0);add(2,0);add(0,1);add(1,2);
 
-add(0,1);
-
-add(1,2);
-
-
-/* ---------- */
+/* ----------- */
 
 
 function countNeighbors(x,y){
@@ -111,8 +138,11 @@ for(let dy=-1;dy<=1;dy++){
 if(dx===0&&dy===0)
 continue;
 
-if(live.has(`${x+dx},${y+dy}`))
-c++;
+if(
+live.has(
+`${x+dx},${y+dy}`
+)
+)c++;
 
 }
 
@@ -121,32 +151,44 @@ return c;
 }
 
 
-
 function step(){
 
-let candidates=new Set();
+let candidates=
+new Set();
+
 
 for(let p of live){
 
-let [x,y]=p.split(",").map(Number);
+let [x,y]=
+p.split(",")
+.map(Number);
 
 for(let dx=-1;dx<=1;dx++)
 for(let dy=-1;dy<=1;dy++){
 
-candidates.add(`${x+dx},${y+dy}`);
+candidates.add(
+`${x+dx},${y+dy}`
+);
 
 }
 
 }
 
 
-let next=new Set();
+let next=
+new Set();
 
 for(let p of candidates){
 
-let [x,y]=p.split(",").map(Number);
+let [x,y]=
+p.split(",")
+.map(Number);
 
-let n=countNeighbors(x,y);
+let n=
+countNeighbors(
+x,
+y
+);
 
 if(live.has(p)){
 
@@ -169,6 +211,7 @@ draw();
 }
 
 
+
 function draw(){
 
 ctx.clearRect(
@@ -178,15 +221,24 @@ canvas.width,
 canvas.height
 );
 
-ctx.strokeStyle="#eeeeee";
 
-for(let x=offsetX%cellSize;
+/* grade */
+
+ctx.strokeStyle=
+"#eeeeee";
+
+for(
+let x=offsetX%cellSize;
 x<canvas.width;
-x+=cellSize){
+x+=cellSize
+){
 
 ctx.beginPath();
 
-ctx.moveTo(x,0);
+ctx.moveTo(
+x,
+0
+);
 
 ctx.lineTo(
 x,
@@ -198,9 +250,11 @@ ctx.stroke();
 }
 
 
-for(let y=offsetY%cellSize;
+for(
+let y=offsetY%cellSize;
 y<canvas.height;
-y+=cellSize){
+y+=cellSize
+){
 
 ctx.beginPath();
 
@@ -220,19 +274,26 @@ ctx.stroke();
 
 
 
-ctx.fillStyle="black";
+/* células */
+
+ctx.fillStyle=
+"black";
+
 
 for(let p of live){
 
-let [x,y]=p
-.split(",")
+let [x,y]=
+p.split(",")
 .map(Number);
+
 
 ctx.fillRect(
 
-x*cellSize+offsetX,
+x*cellSize
++offsetX,
 
-y*cellSize+offsetY,
+y*cellSize
++offsetY,
 
 cellSize,
 
@@ -245,13 +306,36 @@ cellSize
 }
 
 
-playBtn.onclick=function(){
+
+function restartTimer(){
+
+if(running){
+
+clearInterval(
+timer
+);
+
+timer=
+setInterval(
+step,
+speed
+);
+
+}
+
+}
+
+
+
+playBtn.onclick=
+function(){
 
 if(!running){
 
-timer=setInterval(
+timer=
+setInterval(
 step,
-250
+speed
 );
 
 running=true;
@@ -261,7 +345,9 @@ playBtn.innerText=
 
 }else{
 
-clearInterval(timer);
+clearInterval(
+timer
+);
 
 running=false;
 
@@ -273,7 +359,9 @@ playBtn.innerText=
 };
 
 
-zoomIn.onclick=function(){
+
+zoomIn.onclick=
+function(){
 
 cellSize+=2;
 
@@ -282,7 +370,8 @@ draw();
 };
 
 
-zoomOut.onclick=function(){
+zoomOut.onclick=
+function(){
 
 if(cellSize>4){
 
@@ -293,6 +382,149 @@ draw();
 }
 
 };
+
+
+
+fastBtn.onclick=
+function(){
+
+if(speed>50){
+
+speed-=50;
+
+speedLabel.innerText=
+speed+" ms";
+
+restartTimer();
+
+}
+
+};
+
+
+slowBtn.onclick=
+function(){
+
+speed+=50;
+
+speedLabel.innerText=
+speed+" ms";
+
+restartTimer();
+
+};
+
+
+
+canvas.addEventListener(
+"mousedown",
+(e)=>{
+
+dragging=true;
+
+lastX=e.clientX;
+lastY=e.clientY;
+
+}
+);
+
+
+canvas.addEventListener(
+"mouseup",
+()=>{
+
+dragging=false;
+
+}
+);
+
+
+
+canvas.addEventListener(
+"mousemove",
+(e)=>{
+
+if(!dragging)
+return;
+
+let dx=
+e.clientX-lastX;
+
+let dy=
+e.clientY-lastY;
+
+offsetX+=dx;
+offsetY+=dy;
+
+lastX=e.clientX;
+lastY=e.clientY;
+
+draw();
+
+}
+);
+
+
+
+canvas.addEventListener(
+"touchstart",
+(e)=>{
+
+dragging=true;
+
+lastX=
+e.touches[0]
+.clientX;
+
+lastY=
+e.touches[0]
+.clientY;
+
+}
+);
+
+
+canvas.addEventListener(
+"touchend",
+()=>{
+
+dragging=false;
+
+}
+);
+
+
+
+canvas.addEventListener(
+"touchmove",
+(e)=>{
+
+if(!dragging)
+return;
+
+let dx=
+e.touches[0]
+.clientX-lastX;
+
+let dy=
+e.touches[0]
+.clientY-lastY;
+
+offsetX+=dx;
+offsetY+=dy;
+
+lastX=
+e.touches[0]
+.clientX;
+
+lastY=
+e.touches[0]
+.clientY;
+
+draw();
+
+}
+);
 
 
 draw();
