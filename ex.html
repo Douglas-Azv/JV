@@ -384,12 +384,31 @@ playBtn.innerText=
 resetBtn.onclick=
 function(){
 
+clearInterval(timer);
+
+running=false;
+
+playBtn.innerText=
+"▶ Iniciar";
+
+speed=250;
+
+speedLabel.innerText=
+"250 ms";
+
+offsetX=
+window.innerWidth/2;
+
+offsetY=
+window.innerHeight/2;
+
+cellSize=18;
+
 loadPattern();
 
 draw();
 
 };
-
 
 
 zoomIn.onclick=
